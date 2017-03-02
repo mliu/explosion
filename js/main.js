@@ -4,28 +4,25 @@
   // Setup project configuration variables
   if (!window.config) {
     window.config = {};
-
-    config.PIXELS_PER_GRID_SQUARE = 25;
   }
 
   var canvas;
-  var grid = [];
-  var s = [];
+  var boids = [];
+
+  var CANVAS_WIDTH;
+  var CANVAS_HEIGHT;
+  var MAX_VELOCITY = 5;
 
   function init() {
     canvas = $("#canvas");
+    CANVAS_WIDTH = canvas.width();
+    CANVAS_HEIGHT = canvas.height();
 
     window.onresize();
-    
-    // Set up initial grid
-    var xGrid = Math.floor(document.body.clientWidth/config.PIXELS_PER_GRID_SQUARE) * config.PIXELS_PER_GRID_SQUARE;
-    var yGrid = Math.floor(window.innerHeight/config.PIXELS_PER_GRID_SQUARE) * config.PIXELS_PER_GRID_SQUARE;
-    for (var i = 0; i < xGrid; i++) {
-      grid.push(new Array(yGrid));
-    }
 
+    // Add boids
     for (var i = 0; i < 5; i++) {
-      addStarling();
+      addBoid();
     }
 
     window.requestAnimationFrame(step);
@@ -35,8 +32,13 @@
     init();
   });
 
-  function addStarling() {
-    
+  function addBoid() {
+    boids.push(
+      new Boid(
+        Math.round(Math.random() * CANVAS_WIDTH),
+        Math.round(Math.random() * CANVAS_HEIGHT),
+        Math.round(Math.random() * MAX_VELOCITY),
+        Math.round(Math.random() * 360)));
   }
 
   function getHtmlCanvas() {
@@ -44,12 +46,21 @@
   }
 
   function step() {
+    for (var i = 0; i < boids.length; i++) {
+      boids[i].step();
+    }
+
+    var canvas_context = getHtmlCanvas().getContext("2d");
+    canvas_context.beginPath();
+    for (var i = 0; i < boids.length; i++) {
+      boids[i].draw(canvas_context);
+    }
+    canvas_context.stroke();
+
     window.requestAnimationFrame(step);
   }
 
   window.onresize = function() {
-    // Floor round to nearest denomination of grid square
-    // canvas.width(Math.floor(document.body.clientWidth/config.PIXELS_PER_GRID_SQUARE) * config.PIXELS_PER_GRID_SQUARE);
-    // canvas.height(Math.floor(window.innerHeight/config.PIXELS_PER_GRID_SQUARE) * config.PIXELS_PER_GRID_SQUARE);
+    // Do nothing
   };
 })();
