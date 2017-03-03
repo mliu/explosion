@@ -6,6 +6,8 @@
     this.y = initY;
     this.velocity = velocity;
     this.direction = initDirection;
+
+    console.log("Creating boid (" + initX + ", " + initY + ") velocity " + velocity + " facing " + initDirection);
   }
   window.Boid = Boid;
 
@@ -15,6 +17,8 @@
   }
 
   Boid.prototype.step = function() {
-
+    this.x += Math.cos(Math.radians(this.direction)) * this.velocity;
+    this.y += Math.sin(Math.radians(this.direction)) * this.velocity;
+    this.velocity *= .98;
   }
 })();
